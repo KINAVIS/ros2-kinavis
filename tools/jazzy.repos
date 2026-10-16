@@ -1,0 +1,32 @@
+# Sources for Rust messages on ROS 2 Jazzy, as ros2_rust's
+# ros2_rust_jazzy.repos (ros2_rust 3613934), at fixed commits: the message
+# generator for Rust and the message packages it regenerates.
+repositories:
+  ros2-rust/rosidl_runtime_rs:
+    type: git
+    url: https://github.com/ros2-rust/rosidl_runtime_rs.git
+    version: 21def427689fda0156dd4b0dff28d8d0318af03b
+  ros2-rust/rosidl_rust:
+    type: git
+    url: https://github.com/ros2-rust/rosidl_rust.git
+    version: 19d57818dab3b51e418c0893b70b3a1a8b64c495
+  ros2/common_interfaces:
+    type: git
+    url: https://github.com/ros2/common_interfaces.git
+    version: a941f14bb318d8d904505ed935ccbb97f24a70a4
+  ros2/rcl_interfaces:
+    type: git
+    url: https://github.com/ros2/rcl_interfaces.git
+    version: 7aa3caf43377ea6ad615bc1040832e2c7566bfbe
+  ros2/rosidl_core:
+    type: git
+    url: https://github.com/ros2/rosidl_core.git
+    version: c6eb22b0e77cf57b19e9c6ffd114a00749404215
+  ros2/rosidl_defaults:
+    type: git
+    url: https://github.com/ros2/rosidl_defaults.git
+    version: 9749b5919add7e5960cd931ec547d45f06bd0025
+  ros2/unique_identifier_msgs:
+    type: git
+    url: https://github.com/ros2/unique_identifier_msgs.git
+    version: 901599ee92c2ee949f42a5c5d821c92b3e515d69

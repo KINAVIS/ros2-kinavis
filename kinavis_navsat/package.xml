@@ -1,0 +1,22 @@
+<?xml version="1.0"?>
+<?xml-model
+   href="http://download.ros.org/schema/package_format3.xsd"
+   schematypens="http://www.w3.org/2001/XMLSchema"?>
+<package format="3">
+  <name>kinavis_navsat</name>
+  <version>0.1.0</version>
+  <description>NMEA 0183 GNSS receiver node on the KINAVIS crates: sensor_msgs/NavSatFix with the covariance of the receiver's error ellipse, the velocity over the ground in ENU and the receiver's time.</description>
+  <maintainer email="xvi.xv.xii.ix.xxii.ix.xiv@gmail.com">xvi.xv.xii.ix.xxii.ix.xiv</maintainer>
+  <license>MIT</license>
+  <license>Apache-2.0</license>
+  <url type="repository">https://github.com/KINAVIS/ros2-kinavis</url>
+
+  <depend>builtin_interfaces</depend>
+  <depend>geometry_msgs</depend>
+  <depend>sensor_msgs</depend>
+  <depend>std_msgs</depend>
+
+  <export>
+    <build_type>ament_cargo</build_type>
+  </export>
+</package>

@@ -1,0 +1,95 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+# Read-only token: no write, issue or publish permissions.
+permissions:
+  contents: read
+
+# Actions are pinned to full commit SHAs (tag in the comment). Tags are
+# mutable, commits are not.
+env:
+  CARGO_TERM_COLOR: always
+
+jobs:
+  lint:
+    name: Format and lints
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: dtolnay/rust-toolchain@02cb101ec7c40f2c49e1d9714d64511d8e1b74de # v1
+        with:
+          toolchain: stable
+          components: rustfmt, clippy
+      - uses: Swatinem/rust-cache@6323deb102c322ba6fcbdcafc7e3dddab59af2b6 # v2.9.2
+        with:
+          workspaces: kinavis_navsat_core
+      - run: cargo fmt --check --manifest-path kinavis_navsat_core/Cargo.toml
+      - run: cargo fmt --check --manifest-path kinavis_navsat/Cargo.toml
+      # The node's lints need ROS 2: in the ROS 2 job.
+      - run: cargo clippy --all-targets --manifest-path kinavis_navsat_core/Cargo.toml -- -D warnings
+
+  test:
+    name: Tests (${{ matrix.rust }})
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        # MSRV from Cargo.toml, and current stable.
+        rust: ["1.85", stable]
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: dtolnay/rust-toolchain@02cb101ec7c40f2c49e1d9714d64511d8e1b74de # v1
+        with:
+          toolchain: ${{ matrix.rust }}
+      - uses: Swatinem/rust-cache@6323deb102c322ba6fcbdcafc7e3dddab59af2b6 # v2.9.2
+        with:
+          workspaces: kinavis_navsat_core
+      - run: cargo test --manifest-path kinavis_navsat_core/Cargo.toml
+        env:
+          RUSTFLAGS: -D warnings
+
+  ros:
+    name: ROS 2 Jazzy
+    runs-on: ubuntu-latest
+    container: ros:jazzy-ros-base
+    defaults:
+      run:
+        shell: bash
+    steps:
+      - run: |
+          apt-get update
+          apt-get install -y --no-install-recommends curl git libclang-dev python3-pip python3-vcstool
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          path: src/ros2-kinavis
+      - uses: dtolnay/rust-toolchain@02cb101ec7c40f2c49e1d9714d64511d8e1b74de # v1
+        with:
+          toolchain: stable
+          components: clippy
+      # The colcon build types for cargo and ament_cargo; they bring
+      # cargo-ament-build.
+      - run: >-
+          pip install --break-system-packages
+          git+https://github.com/colcon/colcon-cargo.git@518a4f90d7de33d685cfba32a45fb4cb3aa08950
+          git+https://github.com/colcon/colcon-ros-cargo.git@dc26ba5f4e7d016a5f8b78abdaa1c22de9d35442
+      # The Rust message generator and the message packages it regenerates.
+      - run: vcs import src < src/ros2-kinavis/tools/jazzy.repos
+      - run: |
+          . /opt/ros/jazzy/setup.sh
+          colcon build --packages-up-to kinavis_navsat --event-handlers console_cohesion+
+      - name: Lints of the node
+        run: |
+          . install/setup.sh
+          cargo clippy --all-targets --manifest-path src/ros2-kinavis/kinavis_navsat/Cargo.toml -- -D warnings
+      # The node on three recorded receivers: every fix it publishes must be
+      # nmea_navsat_driver's for the same epoch.
+      - name: On recorded receivers
+        run: |
+          . install/setup.sh
+          for log in ublox-neo-m9n-nmea ublox-zed-f9p-nmea quectel-L70; do
+            src/ros2-kinavis/tests/e2e.sh "$log"
+          done

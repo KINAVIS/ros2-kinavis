@@ -1,0 +1,65 @@
+# Cargo build output, beside each package (colcon-ros-cargo builds in place).
+target/
+
+# The library is built only for its tests and the node: no lock file.
+/kinavis_navsat_core/Cargo.lock
+# The node's lock file is committed once its KINAVIS crates resolve from
+# crates.io.
+/kinavis_navsat/Cargo.lock
+
+# Local cargo configuration: [patch] to a KINAVIS checkout.
+/.cargo/
+
+# colcon output when this repository is the workspace itself.
+/build/
+/install/
+/log/
+
+# Python
+__pycache__/
+*.py[cod]
+
+# Coverage and profiling output
+*.profraw
+*.profdata
+/lcov.info
+/coverage/
+
+# Tool leftovers
+*.rs.bk
+*.orig
+*.rej
+
+# Local environment and secrets
+.env
+.env.*
+.envrc
+.direnv/
+
+# AI assistants: local settings, memory and session files
+.claude/
+CLAUDE.md
+CLAUDE.local.md
+.mcp.json
+
+# Editors
+.idea/
+*.iml
+.vscode/
+.zed/
+.fleet/
+.helix/
+*.swp
+*.swo
+.*.sw?
+*~
+\#*\#
+.\#*
+
+# Operating system clutter
+.DS_Store
+._*
+.Spotlight-V100
+.Trashes
+Thumbs.db
+Desktop.ini
