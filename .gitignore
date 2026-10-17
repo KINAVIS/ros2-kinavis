@@ -3,9 +3,6 @@ target/
 
 # The library is built only for its tests and the node: no lock file.
 /kinavis_navsat_core/Cargo.lock
-# The node's lock file is committed once its KINAVIS crates resolve from
-# crates.io.
-/kinavis_navsat/Cargo.lock
 
 # Local cargo configuration: [patch] to a KINAVIS checkout.
 /.cargo/
